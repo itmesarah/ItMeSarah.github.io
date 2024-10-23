@@ -42,14 +42,17 @@ const getClass = (original, args) => {
         componentWillUnmount() {
             if (this.interval) clearInterval(this.interval);
         }
-        render() {
-            const ret = Reflect.apply(original, null, [this.props]);
-			//console.log(args)
-            const ts = timestampTools[formatter](args[0].timestamp.getTime() / 1000, "R");
-            ret.props.children.props.children[1] = ts.formatted;
-            return ret;
-        }
+render() {
+    const ret = Reflect.apply(original, null, [this.props]);
+    //console.log({self: this, args, ret})
+    const ts = timestampTools[formatter](args[0].timestamp.getTime() / 1000, "R");
+    try {
+      ret.props.children = ts.formatted;
     }
+	catch (e) { console.log({thisObject: this, args, ret, msg: e.message}); return ret; }
+    return ret;
+}
+	}
     return props => BdApi.React.createElement(unixTimestamp, props);
 };
 

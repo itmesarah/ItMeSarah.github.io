@@ -387,7 +387,7 @@ module.exports = class UserAffinities {
             const props = BdApi.Utils.findInTree(res,x=>x?.className?.includes?.("toolbar"),{walkable: ['props','children']})
             if (!props) return
             props.children.props.children.push(
-                React.createElement(ButtonUwU, {key: "uwu-affinity", icon: SystemDesign.RobotIcon, tooltip: "Open Affinities", onClick: () => {
+                React.createElement(ButtonUwU, {key: "affinities", icon: SystemDesign.RobotIcon, tooltip: "Open Affinities", onClick: () => {
                     SystemDesign.openModal((props) => React.createElement(LostItemsModal, {props:props}))
                 }})
             )

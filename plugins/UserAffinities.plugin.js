@@ -86,11 +86,9 @@ const {useState, useLayoutEffect} = React
 const settings = ZLibrary.Utilities.loadSettings("UserAffinities", {popoutaffinities: true, modalaffinities: true, guildaffinities: true});
 const SystemDesign = BdApi.Webpack.getModule(x=>x.ModalRoot)
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=1280`;
-
 const LinkButton = BdApi.Webpack.getModule((m) => m.prototype?.render?.toString().includes(".linkButtonIcon"), { searchExports: true });
 const [Module, Key] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byStrings(".current.setThemeOptions("))
 const ButtonUwU = BdApi.Webpack.getByStrings(".iconWrapper])",{searchExports:true})
-
 const openContextMenu = BdApi.Webpack.getByStrings("new DOMRect",{searchExports:true}) // ;3
 
 const PLUGIN_CSS = `

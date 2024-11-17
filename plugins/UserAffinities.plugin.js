@@ -1,8 +1,8 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile.
- * @version 1.0.2
- * @author Sarah
+ * @version 2.0.1
+ * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
  * @website https://itmesarah.github.io/
@@ -106,6 +106,118 @@ const PLUGIN_CSS = `
     user-select: text;
     padding-top: 2px;
 }
+.Affinities-modal {
+            background-color: var(--bg-gradient-midnight-blurple-2);
+            border-radius: 5px;
+            color: #dcddde;
+            padding: 16px;
+            width: 440px;
+        }
+        
+        .Affinities-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .Affinities-title {
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+       
+        .Affinities-tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .Affinities-tab {
+            background: none;
+            border: none;
+            color: #b9bbbe;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 16px;
+            transition: color 0.2s, border-color 0.2s;
+        }
+        
+        .Affinities-tab:hover {
+            color: #dcddde;
+        }
+        
+        .Affinities-tab.active {
+            color: #ffffff;
+            border-bottom: 2px solid #7289da;
+        }
+        
+        .Affinities-content {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .Affinities-section-title {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .Affinities-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            gap: 10px
+        }
+        
+        .Affinities-item:last-child {
+            border-bottom: none;
+        }
+        
+        .Affinities-item-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        
+        .Affinities-item-name {
+            font-size: 14px;
+        }
+        
+        .Affinities-item-date {
+            font-size: 12px;
+            color: #72767d;
+            margin-left: 8px;
+        }
+        
+        .Affinities-no-changes {
+            color: #72767d;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .Affinities-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .Affinities-content::-webkit-scrollbar-track {
+            background-color: #2f3136;
+            border-radius: 4px;
+        }
+        
+        .Affinities-content::-webkit-scrollbar-thumb {
+            background-color: #202225;
+            border-radius: 4px;
+        }
+        
+        .Affinities-content::-webkit-scrollbar-thumb:hover {
+            background-color: #18191c;
+        }
+		.rootWithShadow_f9a4c9{
+			box-shadow: none;
+		}
 `;
 
 function NavigationButton()
@@ -118,22 +230,22 @@ function NavigationButton()
 function ChangeItem({ item, type }) {
     return React.createElement(
         'div',
-        { className: 'Affinities-fa-item' },
+        { className: 'Affinities-item' },
         type === 'friend'
             ? React.createElement(
                 'div',
                 { className: 'author-icon' },
-                React.createElement('img', { src: item.icon, alt: item.affinity, className: 'Affinities-fa-item-icon' }),
+                React.createElement('img', { src: item.icon, alt: item.affinity, className: 'Affinities-item-icon' }),
                 React.createElement('span', null, item.globalName || item.username)
             )
             : item.icon
-                ? React.createElement('img', { src: item.icon, alt: item.name, className: 'Affinities-fa-item-icon' })
+                ? React.createElement('img', { src: item.icon, alt: item.name, className: 'Affinities-item-icon' })
                 : React.createElement('span', null, item.acronym),
         React.createElement(
             'span',
-            { className: 'Affinities-fa-item-name' },
+            { className: 'Affinities-item-name' },
             item.name,
-            React.createElement('span', { className: 'Affinities-fa-item-date' }, ' - ', item.affinity)
+            React.createElement('span', { className: 'Affinities-item-date' }, ' - ', item.affinity)
         )
     );
 }
@@ -143,8 +255,8 @@ function ChangeSection({ title, items, type }) {
 
     return React.createElement(
         'div',
-        { className: 'Affinities-fa-section' },
-        React.createElement('h3', { className: 'Affinities-fa-section-title' }, `${title} - ${items.length}`),
+        { className: 'Affinities-section' },
+        React.createElement('h3', { className: 'Affinities-section-title' }, `${title} - ${items.length}`),
         items.map(item =>
             React.createElement(ChangeItem, { key: item.id, item: item, type: type })
         )
@@ -188,19 +300,19 @@ function LostItemsModal({ props }) {
         { ...props },
         React.createElement(
             'div',
-            { className: 'Affinities-fa-modal' },
+            { className: 'Affinities-modal' },
             React.createElement(
                 'div',
-                { className: 'Affinities-fa-header' },
-                React.createElement('h2', { className: 'Affinities-fa-title' }, 'Friend & Server Affinities')
+                { className: 'Affinities-header' },
+                React.createElement('h2', { className: 'Affinities-title' }, 'Friend & Server Affinities')
             ),
             React.createElement(
                 'div',
-                { className: 'Affinities-fa-tabs' },
+                { className: 'Affinities-tabs' },
                 React.createElement(
                     'button',
                     {
-                        className: `Affinities-fa-tab ${activeTab === 'friends' ? 'active' : ''}`,
+                        className: `Affinities-tab ${activeTab === 'friends' ? 'active' : ''}`,
                         onClick: () => setActiveTab('friends')
                     },
                     'Friends'
@@ -208,7 +320,7 @@ function LostItemsModal({ props }) {
                 React.createElement(
                     'button',
                     {
-                        className: `Affinities-fa-tab ${activeTab === 'servers' ? 'active' : ''}`,
+                        className: `Affinities-tab ${activeTab === 'servers' ? 'active' : ''}`,
                         onClick: () => setActiveTab('servers')
                     },
                     'Servers'
@@ -216,17 +328,17 @@ function LostItemsModal({ props }) {
             ),
             React.createElement(
                 'div',
-                { className: 'Affinities-fa-content' },
+                { className: 'Affinities-content' },
                 activeTab === 'friends' &&
                     React.createElement(
                         'div',
-                        { className: 'Affinities-fa-tab-content' },
+                        { className: 'Affinities-tab-content' },
                         React.createElement(ChangeSection, { title: 'Friend', items: friends, type: 'friend' })
                     ),
                 activeTab === 'servers' &&
                     React.createElement(
                         'div',
-                        { className: 'Affinities-fa-tab-content' },
+                        { className: 'Affinities-tab-content' },
                         React.createElement(ChangeSection, { title: 'Guild', items: guilds, type: 'guild' })
                     )
             )
@@ -282,127 +394,12 @@ module.exports = class UserAffinities {
                 }})
             )
         })
-
-        BdApi.DOM.addStyle(`sarah-boo`,`.Affinities-fa-modal {
-            background-color: var(--bg-gradient-midnight-blurple-2);
-            border-radius: 5px;
-            color: #dcddde;
-            padding: 16px;
-            width: 440px;
-        }
-        
-        .Affinities-fa-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .Affinities-fa-title {
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-        }
-       
-        .Affinities-fa-tabs {
-            display: flex;
-            border-bottom: 1px solid #202225;
-            margin-bottom: 20px;
-        }
-        
-        .Affinities-fa-tab {
-            background: none;
-            border: none;
-            color: #b9bbbe;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 10px 16px;
-            transition: color 0.2s, border-color 0.2s;
-        }
-        
-        .Affinities-fa-tab:hover {
-            color: #dcddde;
-        }
-        
-        .Affinities-fa-tab.active {
-            color: #ffffff;
-            border-bottom: 2px solid #7289da;
-        }
-        
-        .Affinities-fa-content {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .Affinities-fa-section-title {
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-        
-        .Affinities-fa-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #40444b;
-            gap: 10px
-        }
-        
-        .Affinities-fa-item:last-child {
-            border-bottom: none;
-        }
-        
-        .Affinities-fa-item-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        }
-        
-        .Affinities-fa-item-name {
-            font-size: 14px;
-        }
-        
-        .Affinities-fa-item-date {
-            font-size: 12px;
-            color: #72767d;
-            margin-left: 8px;
-        }
-        
-        .Affinities-fa-no-changes {
-            color: #72767d;
-            font-size: 14px;
-            text-align: center;
-            padding: 20px 0;
-        }
-        
-        .Affinities-fa-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .Affinities-fa-content::-webkit-scrollbar-track {
-            background-color: #2f3136;
-            border-radius: 4px;
-        }
-        
-        .Affinities-fa-content::-webkit-scrollbar-thumb {
-            background-color: #202225;
-            border-radius: 4px;
-        }
-        
-        .Affinities-fa-content::-webkit-scrollbar-thumb:hover {
-            background-color: #18191c;
-        }
-		.rootWithShadow_f9a4c9{
-			box-shadow: none;
-		}`)
+		BdApi.DOM.addStyle("UserAffinities", PLUGIN_CSS);
     }
 
     stop() {
         BdApi.DOM.removeStyle("UserAffinities");
-        BdApi.DOM.addStyle(`sarah-boo`)
-        BdApi.Patcher.unpatchAll("UserAffPatch")
+        BdApi.Patcher.unpatchAll("UserAffPatch");
     }
 
     createAffinityLabel(score) {

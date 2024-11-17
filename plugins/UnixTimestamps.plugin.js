@@ -4,7 +4,7 @@
   * @authorLink https://github.com/ItMeSarah
  * @version 1.0.2
  * @invite kckPSV8Z3m
- * @author Sarah
+ * @author Zerebos
  */
  
 /*@cc_on
@@ -31,8 +31,8 @@
 
 @else@*/
 
-const [timestampTools, formatter] = BdApi.Webpack.getWithKey(m => m?.toString?.()?.includes(`full:`));
-const messageTimestamp = BdApi.Webpack.getByStrings("MESSAGE_EDITED_TIMESTAMP_A11Y_LABEL", {defaultExport: false});
+const [timestampTools, formatter] = BdApi.Webpack.getWithKey(m => m?.toString?.()?.includes("full:"));
+const messageTimestamp = BdApi.Webpack.getByStrings("timeFormatted", {defaultExport: false});
 
 const getClass = (original, args) => {
     class unixTimestamp extends BdApi.React.Component {

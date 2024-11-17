@@ -4,7 +4,7 @@
   * @authorLink https://github.com/ItMeSarah
  * @version 1.0.
  * @invite kckPSV8Z3m4
- * @author Sarah
+ * @author Zerebos
  */
  
 /*@cc_on
@@ -87,8 +87,8 @@ return S.SettingPanel.build((id, value) => {
 		if (!e.addedNodes.length || !(e.addedNodes[0] instanceof Element)) return;
 		const element = e.addedNodes[0];
 		if (settings.popouts) {
-			const popout = element.querySelector(`[class*="userPopoutOuter_"]`) ?? element;
-			if (popout && popout.matches(`[class*="userPopoutOuter_"]`)) {
+			const popout = element.querySelector(`[class*="outer_"]`) ?? element;
+			if (popout && popout.matches(`[class*="outer_"]`)) {
 				const userId = findInTree(BdApi.ReactUtils.getInternalInstance(popout), m => m?.user?.id || m?.userId || m?.message?.author?.id, {
 					walkable: ["memoizedProps", "return"]
 				});
@@ -97,7 +97,7 @@ return S.SettingPanel.build((id, value) => {
 			}
 }
 		if (settings.modals) {
-		const modal = element.querySelector(`[class*="userProfileOuter_"]`);
+		const modal = element.querySelector(`[class*="outer_"]`);
 		if (modal) {
 			const userId = findInTree(BdApi.ReactUtils.getInternalInstance(modal), m => m?.user?.id || m?.userId || m?.message?.author?.id, {
 				walkable: ["memoizedProps", "return"]

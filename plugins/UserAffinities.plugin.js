@@ -107,11 +107,11 @@ const PLUGIN_CSS = `
     padding-top: 2px;
 }
 .Affinities-modal {
-            background-color: var(--bg-gradient-midnight-blurple-2);
+            background-color: var(--modal-background);
             border-radius: 5px;
             color: #dcddde;
             padding: 16px;
-            width: 440px;
+            width: auto;
         }
         
         .Affinities-header {

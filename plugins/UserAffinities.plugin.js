@@ -7,10 +7,10 @@
  * @invite kckPSV8Z3m
  * @website https://itmesarah.github.io/
  */
-
+ 
 /*@cc_on
 @if (@_jscript)
-
+    
     // Offer to self-install for clueless users that try to run this directly.
     var shell = WScript.CreateObject("WScript.Shell");
     var fs = new ActiveXObject("Scripting.FileSystemObject");
@@ -74,9 +74,9 @@ const GenericTextClasses = BdApi.Webpack.getByKeys("defaultColor", "h2") ?? {"te
 const SelectClasses = BdApi.Webpack.getByKeys("defaultColor", "selectable") ?? {defaultColor: "defaultColor__30336"};
 const TextClasses = Object.assign(GenericTextClasses, SelectClasses);
 const AffinityStore = BdApi.Webpack.getStore("UserAffinitiesStore");
-const GuildAffinitiesStore = BdApi.Webpack.getStore("GuildAffinitiesStore");
-const RelationshipStore = BdApi.Webpack.getStore("RelationshipStore");
-const UserStore = BdApi.Webpack.getStore("UserStore");
+const GuildAffinitiesStore = BdApi.Webpack.getStore("GuildAffinitiesStore"); 
+const RelationshipStore = BdApi.Webpack.getStore("RelationshipStore"); 
+const UserStore = BdApi.Webpack.getStore("UserStore"); 
 const SelectedGuildStore = BdApi.Webpack.getStore("SelectedGuildStore");
 const ConsentStore = BdApi.Webpack.getStore("ConsentStore");
 const updateConsents = BdApi.Webpack.getByStrings("SETTINGS_CONSENT", "grant", {searchExports: true});
@@ -111,25 +111,25 @@ const PLUGIN_CSS = `
             padding: 16px;
             width: auto;
         }
-
+        
         .Affinities-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .Affinities-title {
             color: #ffffff;
             font-size: 16px;
             font-weight: 600;
             margin: 0;
         }
-
+       
         .Affinities-tabs {
             display: flex;
             margin-bottom: 20px;
         }
-
+        
         .Affinities-tab {
             background: none;
             border: none;
@@ -140,76 +140,76 @@ const PLUGIN_CSS = `
             padding: 10px 16px;
             transition: color 0.2s, border-color 0.2s;
         }
-
+        
         .Affinities-tab:hover {
             color: #dcddde;
         }
-
+        
         .Affinities-tab.active {
             color: #ffffff;
             border-bottom: 2px solid #7289da;
         }
-
+        
         .Affinities-content {
             max-height: 400px;
             overflow-y: auto;
         }
-
+        
         .Affinities-section-title {
             color: #ffffff;
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 12px;
         }
-
+        
         .Affinities-item {
             display: flex;
             align-items: center;
             padding: 8px 0;
             gap: 10px
         }
-
+        
         .Affinities-item:last-child {
             border-bottom: none;
         }
-
+        
         .Affinities-item-icon {
             width: 32px;
             height: 32px;
             border-radius: 50%;
         }
-
+        
         .Affinities-item-name {
             font-size: 14px;
         }
-
+        
         .Affinities-item-date {
             font-size: 12px;
             color: #72767d;
             margin-left: 8px;
         }
-
+        
         .Affinities-no-changes {
             color: #72767d;
             font-size: 14px;
             text-align: center;
             padding: 20px 0;
         }
-
+        
         .Affinities-content::-webkit-scrollbar {
             width: 8px;
         }
-
+        
         .Affinities-content::-webkit-scrollbar-track {
             background-color: #2f3136;
             border-radius: 4px;
         }
-
+        
         .Affinities-content::-webkit-scrollbar-thumb {
             background-color: #202225;
             border-radius: 4px;
         }
-
+        
         .Affinities-content::-webkit-scrollbar-thumb:hover {
             background-color: #18191c;
         }
@@ -361,7 +361,7 @@ function forceUpdate(element) {
     );
   }
 
-module.exports = class UserAffinities {
+module.exports = class UserAffinities { 
     getSettingsPanel() {
         const S = ZLibrary.Settings;
         return S.SettingPanel.build((id, value) => {
@@ -417,7 +417,7 @@ module.exports = class UserAffinities {
         return affinityWrap;
     }
 
-    processUserElement(element, mainQuery, targetQuery) {
+    processUserElement(element, mainQuery, targetQuery) { 
         // Try go get the main element as a descendent with fallback to currently added element
         const mainElement = element.querySelector(mainQuery) ?? element;
 
@@ -444,7 +444,7 @@ module.exports = class UserAffinities {
         target.append(this.createAffinityLabel(affinity.affinity));
     }
 
-    processUserPopout(element) {
+    processUserPopout(element) { 
         // If the setting is disabled don't bother processing
         if (!settings.popoutaffinities) return;
 

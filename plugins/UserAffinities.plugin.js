@@ -99,123 +99,120 @@ const PLUGIN_CSS = `
 .affinity-label {
     color: var(--text-normal);
 }
+	
+.Affinities-modal {
+	background-color: var(--modal-background);
+	border-radius: 5px;
+	color: #dcddde;
+	padding: 16px;
+	width: auto;
+}
 
+.Affinities-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.Affinities-title {
+	color: #ffffff;
+	font-size: 16px;
+	font-weight: 600;
+	margin: 0;
+}
+
+.Affinities-tabs {
+	display: flex;
+	margin-bottom: 20px;
+}
+
+.Affinities-tab {
+	background: none;
+	border: none;
+	color: #b9bbbe;
+	cursor: pointer;
+	font-size: 14px;
+	font-weight: 500;
+	padding: 10px 16px;
+	transition: color 0.2s, border-color 0.2s;
+}
+
+.Affinities-tab:hover {
+	color: #dcddde;
+}
+
+.Affinities-tab.active {
+	color: #ffffff;
+	border-bottom: 2px solid #7289da;
+}
+
+.Affinities-content {
+	max-height: 400px;
+	overflow-y: auto;
+}
+
+.Affinities-section-title {
+	color: #ffffff;
+	font-size: 14px;
+	font-weight: 600;
+	margin-bottom: 12px;
+}
+
+.Affinities-item {
+	display: flex;
+	align-items: center;
+	padding: 8px 0;
+	gap: 10px
+}
+
+.Affinities-item:last-child {
+	border-bottom: none;
+}
+
+.Affinities-item-icon {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+}
+
+.Affinities-item-name {
+	font-size: 14px;
+}
+
+.Affinities-item-date {
+	font-size: 12px;
+	color: #72767d;
+	margin-left: 8px;
+}
+
+.Affinities-no-changes {
+	color: #72767d;
+	font-size: 14px;
+	text-align: center;
+	padding: 20px 0;
+}
+
+.Affinities-content::-webkit-scrollbar {
+	width: 8px;
+}
+
+.Affinities-content::-webkit-scrollbar-track {
+	background-color: #2f3136;
+	border-radius: 4px;
+}
+
+.Affinities-content::-webkit-scrollbar-thumb {
+	background-color: #202225;
+	border-radius: 4px;
+}
+
+.Affinities-content::-webkit-scrollbar-thumb:hover {
+	background-color: #18191c;
+}
 .affinity-container {
     user-select: text;
     padding-top: 2px;
 }
-.Affinities-modal {
-            background-color: var(--modal-background);
-            border-radius: 5px;
-            color: #dcddde;
-            padding: 16px;
-            width: auto;
-        }
-        
-        .Affinities-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .Affinities-title {
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: 600;
-            margin: 0;
-        }
-       
-        .Affinities-tabs {
-            display: flex;
-            margin-bottom: 20px;
-        }
-        
-        .Affinities-tab {
-            background: none;
-            border: none;
-            color: #b9bbbe;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            padding: 10px 16px;
-            transition: color 0.2s, border-color 0.2s;
-        }
-        
-        .Affinities-tab:hover {
-            color: #dcddde;
-        }
-        
-        .Affinities-tab.active {
-            color: #ffffff;
-            border-bottom: 2px solid #7289da;
-        }
-        
-        .Affinities-content {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        
-        .Affinities-section-title {
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 12px;
-        }
-        
-        .Affinities-item {
-            display: flex;
-            align-items: center;
-            padding: 8px 0;
-            gap: 10px
-        }
-        
-        .Affinities-item:last-child {
-            border-bottom: none;
-        }
-        
-        .Affinities-item-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-        }
-        
-        .Affinities-item-name {
-            font-size: 14px;
-        }
-        
-        .Affinities-item-date {
-            font-size: 12px;
-            color: #72767d;
-            margin-left: 8px;
-        }
-        
-        .Affinities-no-changes {
-            color: #72767d;
-            font-size: 14px;
-            text-align: center;
-            padding: 20px 0;
-        }
-        
-        .Affinities-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        
-        .Affinities-content::-webkit-scrollbar-track {
-            background-color: #2f3136;
-            border-radius: 4px;
-        }
-        
-        .Affinities-content::-webkit-scrollbar-thumb {
-            background-color: #202225;
-            border-radius: 4px;
-        }
-        
-        .Affinities-content::-webkit-scrollbar-thumb:hover {
-            background-color: #18191c;
-        }
-		.rootWithShadow_f9a4c9{
-			box-shadow: none;
-		}
 `;
 
 function NavigationButton()

@@ -1,4 +1,4 @@
-User Affinities provides utility to show how much you've interacted with other users.
+User Affinities provides utility to show how much you've interacted with other users. Opening the modal shows only friends and servers you're a part of, Opening a user profile or popout shows them even if you're not friends if you're interacted with them.
 
 Modal Friends:<br> ![image](https://github.com/user-attachments/assets/cc5b45c5-41b8-4a9a-8d81-e8a83e5aafe5)<br>
 Modal Servers:<br> ![image](https://github.com/user-attachments/assets/d4b52d93-ea26-41de-a068-4e4befb74ea3)<br>

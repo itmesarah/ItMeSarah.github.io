@@ -2,7 +2,7 @@
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
  * @version 2.0.1
- * @author Sarah,Zerebos,Arven
+ * @author Sarah, Zerebos, Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
  * @website https://itmesarah.github.io/

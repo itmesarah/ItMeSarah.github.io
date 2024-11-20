@@ -36,25 +36,21 @@
 const Queries = {
     UserPopout: {
         main: [
-            `[class*="userPopout_"]`,      // This should catch all
-            `[class*="userPopoutOuter_"]`, // Just in case
-            `[class*="userPanelInner_"]`   // Just in case
+            `[class*="biteSize_"]` // Just in case
         ].join(","),
 
         target: [
-            `[class*="section__"] > div`,            // This is for normal
             `[class*="body_"] [class*="container_"]` // This is for simplified
         ].join(",")
     },
 
     UserModal: {
         main: [
-            `[class*="root_"]` // This catches all user modal roots
+            `[class*="fullSize_"]` // This catches all user modal roots
         ].join(","),
 
         target: [
-            `[class*="body_"] [class*="container_"]`,       // This is for normal
-            `[class*="container_"] > [class*="container_"]` // This is for simplified
+            `[class*="body_"] > [class*="container_"]` // This is for simplified
         ].join(",")
     },
 
@@ -70,7 +66,7 @@ const Queries = {
 }
 
 
-const GenericTextClasses = BdApi.Webpack.getByKeys("defaultColor", "h2") ?? {"text-sm/normal": "text-sm-normal__95a78"};
+const GenericTextClasses = BdApi.Webpack.getByKeys("defaultColor", "h2");
 const SelectClasses = BdApi.Webpack.getByKeys("defaultColor", "selectable") ?? {defaultColor: "defaultColor__30336"};
 const TextClasses = Object.assign(GenericTextClasses, SelectClasses);
 const AffinityStore = BdApi.Webpack.getStore("UserAffinitiesStore");
@@ -85,7 +81,7 @@ const React = BdApi.React
 const {useState, useLayoutEffect} = React
 const settings = ZLibrary.Utilities.loadSettings("UserAffinities", {popoutaffinities: true, modalaffinities: true, guildaffinities: true});
 const SystemDesign = BdApi.Webpack.getModule(x=>x.ModalRoot)
-const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=1280`;
+const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
 const LinkButton = BdApi.Webpack.getModule((m) => m.prototype?.render?.toString().includes(".linkButtonIcon"), { searchExports: true });
 const [Module, Key] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byStrings(".current.setThemeOptions("))
 const ButtonUwU = BdApi.Webpack.getByStrings(".iconWrapper])",{searchExports:true})
@@ -99,6 +95,17 @@ const PLUGIN_CSS = `
 .affinity-label {
     color: var(--text-normal);
 }
+
+.affinity-container {
+    user-select: text;
+    padding-top: 2px;
+}
+[aria-label="Open Affinities"] path[d="M7.89 13.46a1 1 0 0 1-1.78-.9L7 13l-.9-.45.01-.01.01-.02a2.42 2.42 0 0 1 .14-.23c.1-.14.23-.31.4-.5.37-.36.98-.79 1.84-.79.86 0 1.47.43 1.83.8a3.28 3.28 0 0 1 .55.72v.02h.01v.01L10 13l.9-.45a1 1 0 0 1-1.79.9 1.28 1.28 0 0 0-.19-.25c-.14-.13-.28-.2-.42-.2-.14 0-.28.07-.42.2a1.28 1.28 0 0 0-.19.25ZM13.55 13.9a1 1 0 0 0 1.34-.44c0-.02.02-.04.04-.06.03-.05.08-.13.15-.2.14-.13.28-.2.42-.2.14 0 .28.07.42.2a1.28 1.28 0 0 1 .19.25 1 1 0 0 0 1.78-.9L17 13l.9-.45-.01-.01-.01-.02a2.57 2.57 0 0 0-.14-.23 3.28 3.28 0 0 0-.4-.5c-.37-.36-.98-.79-1.84-.79-.86 0-1.47.43-1.83.8a3.28 3.28 0 0 0-.55.72v.02h-.01v.01L14 13l-.9-.45a1 1 0 0 0 .45 1.34Z"]{
+fill: orange;
+}
+[aria-label="Open Affinities"] path[d="M12 21c5.52 0 10-1.86 10-6 0-5.59-2.8-10.07-4.26-11.67a1 1 0 1 0-1.48 1.34 14.8 14.8 0 0 1 2.35 3.86A10.23 10.23 0 0 0 12 6C9.47 6 7.15 7.02 5.4 8.53a14.8 14.8 0 0 1 2.34-3.86 1 1 0 0 0-1.48-1.34A18.65 18.65 0 0 0 2 15c0 4.14 4.48 6 10 6Zm0-12c3.87 0 7 2 7 4.2S15.87 17 12 17s-7-1.6-7-3.8C5 11 8.13 9 12 9Z"]{
+fill: aqua;
+}
 	
 .Affinities-modal {
 	background-color: var(--modal-background);
@@ -107,7 +114,7 @@ const PLUGIN_CSS = `
 	padding: 16px;
 	width: auto;
 }
-
+        
 .Affinities-header {
 	display: flex;
 	justify-content: space-between;
@@ -208,10 +215,6 @@ const PLUGIN_CSS = `
 
 .Affinities-content::-webkit-scrollbar-thumb:hover {
 	background-color: #18191c;
-}
-.affinity-container {
-    user-select: text;
-    padding-top: 2px;
 }
 `;
 

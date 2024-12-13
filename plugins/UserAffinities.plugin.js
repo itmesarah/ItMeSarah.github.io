@@ -1,8 +1,8 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.1
- * @author Sarah, Zerebos, Arven
+ * @version 2.0.2
+ * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
  * @website https://itmesarah.github.io/
@@ -31,6 +31,21 @@
     WScript.Quit();
 
 @else@*/
+
+// Change types are fixed, improved, progress, added
+const changelog = {
+    blurb: "Version 2.0.2 removes the need for Zeres Plugin Library",
+    changes: [
+        {
+            title: "Settings Improved",
+            type: "fixed",
+            blurb: "Switched away from Zeres Plugin Library",
+            items: [
+                "Switched to BdApi for settings, so you should no longer need ZPL to use the plugin. "
+            ]
+        }
+    ]
+}
 
 
 const Queries = {
@@ -79,7 +94,7 @@ const updateConsents = BdApi.Webpack.getByStrings("SETTINGS_CONSENT", "grant", {
 const GuildStore = BdApi.Webpack.getStore("GuildStore")
 const React = BdApi.React
 const {useState, useLayoutEffect} = React
-const settings = ZLibrary.Utilities.loadSettings("UserAffinities", {popoutaffinities: true, modalaffinities: true, guildaffinities: true});
+const settings = Object.assign({popoutaffinities: true, modalaffinities: true, guildaffinities: true}, BdApi.Data.load("UserAffinities", "settings"));
 const SystemDesign = BdApi.Webpack.getModule(x=>x.ModalRoot)
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
 const LinkButton = BdApi.Webpack.getModule((m) => m.prototype?.render?.toString().includes(".linkButtonIcon"), { searchExports: true });
@@ -361,20 +376,35 @@ function forceUpdate(element) {
     );
   }
 
-module.exports = class UserAffinities { 
+module.exports = class UserAffinities {
+    constructor(meta) {
+        this.meta = meta;
+    }
+    
     getSettingsPanel() {
-        const S = ZLibrary.Settings;
-        return S.SettingPanel.build((id, value) => {
+        return BdApi.UI.buildSettingsPanel({
+            onChange: (_, id, value) => {
                 settings[id.toLowerCase()] = value;
-                ZLibrary.Utilities.saveSettings("UserAffinities", settings);
+                BdApi.Data.save("UserAffinities", "settings", settings);
             },
-            new S.Switch("PopoutAffinities", "Adds Affinity Scores to User Popouts", settings.popoutaffinities),
-            new S.Switch("ModalAffinities", "Adds Affinity Scores to User Modals", settings.modalaffinities),
-            new S.Switch("GuildAffinities", "Adds Affinity Scores to Guilds", settings.guildaffinities),
-        );
+            settings: [
+                {type: "switch", id: "popoutaffinities", name: "Popout Affinities", note: "Adds Affinity score to User Popouts", value: settings.popoutaffinities},
+                {type: "switch", id: "modalaffinities", name: "Modal Affinities", note: "Adds Affinity score to User Modals", value: settings.modalaffinities},
+                {type: "switch", id: "guildaffinities", name: "Guild Affinities", note: "Adds Affinity score to Guilds", value: settings.guildaffinities},
+            ]
+        });
     }
 
     start() {
+        const savedVersion = BdApi.Data.load("UserAffinities", "version");
+        if (savedVersion !== this.meta.version) {
+            BdApi.UI.showChangelogModal(Object.assign({
+                title: this.meta.name,
+                subtitle: `v${this.meta.version}`,
+            }, changelog));
+            BdApi.Data.save("UserAffinities", "version", this.meta.version);
+        }
+
         if (!ConsentStore.hasConsented("personalization")) {
             BdApi.UI.showConfirmationModal("Incorrect Setting", "In order for this plugin to work, you must enable Discord personalization data collection. Do you want to enable it now?", {
                 confirmText: "Yes",

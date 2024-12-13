@@ -2,9 +2,9 @@
  * @name DataAttributes
  * @description Adds helpful data attributes to different elements. Useful for themes.
   * @authorLink https://github.com/ItMeSarah
- * @version 1.0.
+ * @version 1.0.2
  * @invite kckPSV8Z3m4
- * @author Zerebos
+ * @author Sarah
  */
  
 /*@cc_on
@@ -64,31 +64,29 @@ function findInTree(tree, searchFilter, {
 	return tempReturn;
 };
 
-const settings = ZLibrary.Utilities.loadSettings("DataAttributes", {
-  popouts: true,
-  modals: true,
-  usernames: true,
-});
+const settings = Object.assign({popouts: true, modals: true, usernames: true}, BdApi.Data.load("DataAttributes", "settings"));
 module.exports = class DataAttributes {
 	start() {}
 	stop() {}
-	getSettingsPanel() {
-const S = ZLibrary.Settings;
-return S.SettingPanel.build((id, value) => {
-  settings[id.toLowerCase()] = value;
-  ZLibrary.Utilities.saveSettings("DataAttributes", settings);
-},
-  new S.Switch("Popouts", "Add user ID & unique ID to popouts", settings.popouts),
-  new S.Switch("Modals", "Add user ID & unique ID to modals", settings.modals),
-    new S.Switch("Usernames", "Add user ID & unique ID to usernames", settings.usernames),
-);
-}
+    getSettingsPanel() {
+        return BdApi.UI.buildSettingsPanel({
+            onChange: (_, id, value) => {
+                settings[id.toLowerCase()] = value;
+                BdApi.Data.save("DataAttributes", "settings", settings);
+            },
+            settings: [
+                {type: "switch", id: "popouts", name: "Popout Attributes", note: "Add user ID & unique ID to popouts", value: settings.popouts},
+                {type: "switch", id: "modals", name: "Modal Attributes", note: "Add user ID & unique ID to modals", value: settings.modals},
+                {type: "switch", id: "usernames", name: "Guild Attributes", note: "Add user ID & unique ID to usernames", value: settings.usernames},
+            ]
+        });
+    }
 	observer(e) {
 		if (!e.addedNodes.length || !(e.addedNodes[0] instanceof Element)) return;
 		const element = e.addedNodes[0];
 		if (settings.popouts) {
-			const popout = element.querySelector(`[class*="outer_"]`) ?? element;
-			if (popout && popout.matches(`[class*="outer_"]`)) {
+			const popout = element.querySelector(`[class*="biteSize_"]`) ?? element;
+			if (popout && popout.matches(`[class*="biteSize_"]`)) {
 				const userId = findInTree(BdApi.ReactUtils.getInternalInstance(popout), m => m?.user?.id || m?.userId || m?.message?.author?.id, {
 					walkable: ["memoizedProps", "return"]
 				});
@@ -97,7 +95,7 @@ return S.SettingPanel.build((id, value) => {
 			}
 }
 		if (settings.modals) {
-		const modal = element.querySelector(`[class*="outer_"]`);
+		const modal = element.querySelector(`[class*="fullSize_"]`);
 		if (modal) {
 			const userId = findInTree(BdApi.ReactUtils.getInternalInstance(modal), m => m?.user?.id || m?.userId || m?.message?.author?.id, {
 				walkable: ["memoizedProps", "return"]

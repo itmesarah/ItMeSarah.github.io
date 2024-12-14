@@ -32,44 +32,64 @@
 @else@*/
 
 const [timestampTools, formatter] = BdApi.Webpack.getWithKey(m => m?.toString?.()?.includes("full:"));
-const messageTimestamp = BdApi.Webpack.getByStrings("timeFormatted", {defaultExport: false});
+const messageTimestamp = BdApi.Webpack.getByStrings("timeFormatted", { defaultExport: false });
 
 const getClass = (original, args) => {
     class unixTimestamp extends BdApi.React.Component {
         componentDidMount() {
             this.interval = setInterval(this.forceUpdate.bind(this), 1000);
         }
+
         componentWillUnmount() {
             if (this.interval) clearInterval(this.interval);
         }
-render() {
-    const ret = Reflect.apply(original, null, [this.props]);
-    //console.log({self: this, args, ret})
-    const ts = timestampTools[formatter](args[0].timestamp.getTime() / 1000, "R");
-    try {
-      ret.props.children = ts.formatted;
+
+        render() {
+            // Check if timestampTools and formatter are valid
+            if (!timestampTools || !formatter || !timestampTools[formatter]) {
+                console.error("timestampTools or formatter is undefined");
+                return Reflect.apply(original, null, [this.props]); // Fallback to original if error
+            }
+
+            const ret = Reflect.apply(original, null, [this.props]);
+            const ts = timestampTools[formatter](args[0].timestamp.getTime() / 1000, "R");
+
+            try {
+                ret.props.children = ts.formatted;
+            } catch (e) {
+                console.log({ thisObject: this, args, ret, msg: e.message });
+                return ret; // Fallback on error
+            }
+
+            return ret;
+        }
     }
-	catch (e) { console.log({thisObject: this, args, ret, msg: e.message}); return ret; }
-    return ret;
-}
-	}
-    return props => BdApi.React.createElement(unixTimestamp, props);
+
+    return (props) => BdApi.React.createElement(unixTimestamp, props);
 };
 
-module.exports = class unixTimestamps { 
+module.exports = class unixTimestamps {
     start() {
-        
-        BdApi.Patcher.after("unixTimestamps", messageTimestamp, "Z", (t,a,r) => {
+        // Ensure messageTimestamp is found
+        if (!messageTimestamp) {
+            console.error("messageTimestamp is undefined");
+            return;
+        }
+
+        BdApi.Patcher.after("unixTimestamps", messageTimestamp, "Z", (t, a, r) => {
             const orig = r.props.children.props.children;
+            // Check if the component is already patched
             if (orig.__patched) return;
+            // Apply the patch
             r.props.children.props.children = getClass(orig, a);
-            r.props.children.props.children.__patched = true;
+            r.props.children.props.children.__patched = true; // Mark as patched
         });
     }
 
     stop() {
         BdApi.Patcher.unpatchAll("unixTimestamps");
     }
-}
+};
+
 
 /*@end@*/

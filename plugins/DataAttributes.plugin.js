@@ -75,12 +75,13 @@ module.exports = class DataAttributes {
                 BdApi.Data.save("DataAttributes", "settings", settings);
             },
             settings: [
-                {type: "switch", id: "popouts", name: "Popout Attributes", note: "Add user ID & unique ID to popouts", value: settings.popouts},
-                {type: "switch", id: "modals", name: "Modal Attributes", note: "Add user ID & unique ID to modals", value: settings.modals},
-                {type: "switch", id: "usernames", name: "Guild Attributes", note: "Add user ID & unique ID to usernames", value: settings.usernames},
+                {type: "switch", id: "userpopout", name: "Popout Attributes", note: "Add user ID & unique ID to popouts", value: settings.userpopout},
+                {type: "switch", id: "usermodal", name: "Modal Attributes", note: "Add user ID & unique ID to modals", value: settings.usermodal},
+                {type: "switch", id: "username", name: "Guild Attributes", note: "Add user ID & unique ID to usernames", value: settings.username},
             ]
         });
     }
+	
 	observer(e) {
 		if (!e.addedNodes.length || !(e.addedNodes[0] instanceof Element)) return;
 		const element = e.addedNodes[0];

@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.4
+ * @version 2.0.3
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -362,10 +362,10 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.0.4 Fixes the svg path not being colored",
+    blurb: "Version 2.0.3 Fixes the svg path not being colored",
     changes: [
         {
-            title: "svg path should properly be colored.",
+            title: "Settings Improved",
             type: "fixed",
             blurb: "Affinities icon in toolbar should be properly colored now.",
             items: [

@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.4
+ * @version 2.0.5
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -362,7 +362,7 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.0.4 Fixes the Affinities button not showing up in voice chat, causing an error every few seconds.",
+    blurb: "Version 2.0.5 Fixes the Affinities button not showing up in voice chat, causing an error every few seconds.",
     changes: [
         {
             title: "Fixed an issue with the affinities button erroring in voice channels.",
@@ -430,8 +430,11 @@ module.exports = class UserAffinities {
 
             const unpatch = BdApi.Patcher.after("UserAffPatch", props.children, 'type', (aa, bb, cc) => {
                 unpatch();
-                cc.props.children.push(button);
+                try {
+                    cc.props.children.push(button);
+                } catch (err) {}
             });
+
         });
 
 		BdApi.DOM.addStyle("UserAffinities", PLUGIN_CSS);

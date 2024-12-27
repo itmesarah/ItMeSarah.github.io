@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.3
+ * @version 2.0.4
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -83,7 +83,7 @@ const SystemDesign = BdApi.Webpack.getModule(x=>x.ModalRoot)
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
 const LinkButton = BdApi.Webpack.getModule((m) => m.prototype?.render?.toString().includes(".linkButtonIcon"), { searchExports: true });
 const [Module, Key] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byStrings(".current.setThemeOptions("))
-const ButtonUwU = BdApi.Webpack.getByStrings(".iconWrapper])",{searchExports:true})
+const AffinitiesButton = BdApi.Webpack.getByStrings(".iconWrapper])",{searchExports:true})
 const openContextMenu = BdApi.Webpack.getByStrings("new DOMRect",{searchExports:true}) // ;3
 
 const PLUGIN_CSS = `
@@ -362,14 +362,14 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.0.3 Fixes the svg path not being colored",
+    blurb: "Version 2.0.4 Fixes the Affinities button not showing up in voice chat, causing an error every few seconds.",
     changes: [
         {
-            title: "Settings Improved",
+            title: "Fixed an issue with the affinities button erroring in voice channels.",
             type: "fixed",
-            blurb: "Affinities icon in toolbar should be properly colored now.",
+            blurb: "Affinities icon in toolbar should be shown in the voice channel when viewing a voice channel.",
             items: [
-                "Discord changed the svg path, fixed it."
+                "Affinities icon shows in toolbar in voice channels now."
             ]
         }
     ]
@@ -412,15 +412,28 @@ module.exports = class UserAffinities {
             });
         }
 
-        BdApi.Patcher.after("UserAffPatch", Module, Key, (a,args,res) => {
-            const props = BdApi.Utils.findInTree(res,x=>x?.className?.includes?.("toolbar"),{walkable: ['props','children']})
-            if (!props) return
-            props.children.props.children.push(
-                React.createElement(ButtonUwU, {key: "affinities", icon: SystemDesign.RobotIcon, tooltip: "Open Affinities", onClick: () => {
-                    SystemDesign.openModal((props) => React.createElement(LostItemsModal, {props:props}))
-                }})
-            )
-        })
+        BdApi.Patcher.after("UserAffPatch", Module, Key, (a, args, res) => {
+            const props = BdApi.Utils.findInTree(res, x => x?.className?.includes?.("toolbar"), { walkable: ['props', 'children'] }) ||
+                BdApi.Utils.findInTree(res, x => x?.onDoubleClick, { walkable: ['props', 'children'] });
+            if (!props) return;
+
+            const button = React.createElement(AffinitiesButton, {
+                key: "affinities",
+                icon: SystemDesign.RobotIcon,
+                tooltip: "Open Affinities",
+                onClick: () => SystemDesign.openModal(props => React.createElement(LostItemsModal, { props }))
+            });
+
+            try {
+                props.children.props.children.push(button);
+            } catch (err) {}
+
+            const unpatch = BdApi.Patcher.after("UserAffPatch", props.children, 'type', (aa, bb, cc) => {
+                unpatch();
+                cc.props.children.push(button);
+            });
+        });
+
 		BdApi.DOM.addStyle("UserAffinities", PLUGIN_CSS);
     }
 

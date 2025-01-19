@@ -177,6 +177,7 @@ module.exports = class ProfileSoundPlugin {
                                         padding: "5px",
                                         border: "1px solid #ccc",
                                         borderRadius: "3px",
+										background: "black",
                                     },
                                     onChange: (e) => (soundUrl = e.target.value),
                                 }),

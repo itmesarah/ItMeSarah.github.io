@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.6
+ * @version 2.0.7
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -79,7 +79,11 @@ const GuildStore = BdApi.Webpack.getStore("GuildStore")
 const React = BdApi.React
 const {useState, useLayoutEffect} = React
 const settings = Object.assign({popoutaffinities: true, modalaffinities: true, guildaffinities: true}, BdApi.Data.load("UserAffinities", "settings"));
-const SystemDesign = BdApi.Webpack.getModule(x=>x.ModalRoot)
+const SystemDesign = {
+    RobotIcon: BdApi.Webpack.getByStrings('"M7.89 13.46a1 1 0 0 1-1.78-.9L7 13l-.9-.45.01-.01.01-.02a2.42 2.42 0 0 1',{searchExports:true}),
+    ModalRoot: BdApi.Webpack.getByRegex(/let{transitionState:.{1,3},children:.{1,3},size:.{1,3}/,{searchExports:true}),
+    openModal: BdApi.Webpack.getByStrings('onCloseRequest','onCloseCallback','onCloseCallback','instant','backdropStyle',{searchExports:true})
+}
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
 const LinkButton = BdApi.Webpack.getModule((m) => m.prototype?.render?.toString().includes(".linkButtonIcon"), { searchExports: true });
 const [Module, Key] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byStrings(".current.setThemeOptions("))
@@ -209,13 +213,6 @@ const PLUGIN_CSS = `
 	background-color: #18191c;
 }
 `;
-
-function NavigationButton()
-{
-    return React.createElement(LinkButton, {icon: SystemDesign.RobotIcon, text: "Affinities", onClick: () => {
-        SystemDesign.openModal((props) => React.createElement(LostItemsModal, {props:props}))
-    }})
-}
 
 function ChangeItem({ item, type }) {
     return React.createElement(
@@ -355,14 +352,14 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.0.6 removes styling for the User Affinities icon.",
+    blurb: "Version 2.0.7 Plugin fixed, Discord did a mean and removed stuff.",
     changes: [
         {
-            title: "Removed styling for the User Affinities icon so it matches Discord's styling",
-            type: "improved",
-            blurb: "Affinities icon in toolbar should be shown in the voice channel when viewing a voice channel.",
+            title: "Fixed the plugin not having the icon/erroring when the icon is clicked",
+            type: "fixed",
+            blurb: "Affinities icon should now be fixed, thanks Arven.",
             items: [
-                "Affinities icon now matches Discord's styling."
+                "Affinities icon shows again and no longer throws errors when clicked."
             ]
         }
     ]

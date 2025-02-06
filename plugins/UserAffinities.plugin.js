@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.8
+ * @version 2.0.9
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -351,7 +351,7 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.0.8 Plugin fixed, Discord did a mean and removed stuff.",
+    blurb: "Version 2.0.9 Plugin fixed, Discord did a mean and removed stuff.",
     changes: [
         {
             title: "Fixed the plugin not having the erroring when entering a guild/dm",

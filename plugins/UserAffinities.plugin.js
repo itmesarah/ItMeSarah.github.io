@@ -86,7 +86,7 @@ const SystemDesign = {
 }
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
 const [Module, Key] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byStrings(".current.setThemeOptions("))
-const AffinitiesButton = BdApi.Webpack.getBySource('BaseHeaderBar').JO
+const AffinitiesButton = BdApi.Webpack.getByStrings('.Masks.HEADER_BAR_BADGE_BOTTOM',{searchExports:true})
 const openContextMenu = BdApi.Webpack.getByStrings("new DOMRect",{searchExports:true}) // ;3
 
 const PLUGIN_CSS = `

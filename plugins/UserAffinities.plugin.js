@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.7
+ * @version 2.0.8
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -351,14 +351,14 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.0.7 Plugin fixed, Discord did a mean and removed stuff.",
+    blurb: "Version 2.0.8 Plugin fixed, Discord did a mean and removed stuff.",
     changes: [
         {
-            title: "Fixed the plugin not having the icon/erroring when the icon is clicked",
+            title: "Fixed the plugin not having the erroring when entering a guild/dm",
             type: "fixed",
-            blurb: "Affinities icon should now be fixed, thanks Arven.",
+            blurb: "Plugin should be fixed, thanks Arven.",
             items: [
-                "Affinities icon shows again and no longer throws errors when clicked."
+                "Should no longer crash"
             ]
         }
     ]

@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.0.9
+ * @version 2.1.0
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -81,7 +81,7 @@ const {useState, useLayoutEffect} = React
 const settings = Object.assign({popoutaffinities: true, modalaffinities: true, guildaffinities: true}, BdApi.Data.load("UserAffinities", "settings"));
 const SystemDesign = {
     RobotIcon: BdApi.Webpack.getByStrings('"M7.89 13.46a1 1 0 0 1-1.78-.9L7 13l-.9-.45.01-.01.01-.02a2.42 2.42 0 0 1',{searchExports:true}),
-    ModalRoot: BdApi.Webpack.getByRegex(/let{transitionState:.{1,3},children:.{1,3},size:.{1,3}/,{searchExports:true}),
+    ModalRoot: BdApi.Webpack.getByStrings('.ImpressionTypes.MODAL,"aria-labelledby":',{searchExports:true}),
     openModal: BdApi.Webpack.getByStrings('onCloseRequest','onCloseCallback','onCloseCallback','instant','backdropStyle',{searchExports:true})
 }
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
@@ -351,14 +351,14 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.0.9 Plugin fixed, Discord did a mean and removed stuff.",
+    blurb: "Version 2.1.0 preemptively fixes the modal root which will break soon.",
     changes: [
         {
-            title: "Fixed the plugin not having the erroring when entering a guild/dm",
+            title: "Preemptive fix",
             type: "fixed",
-            blurb: "Plugin should be fixed, thanks Arven.",
+            blurb: "Modal root would soon break, this just is getting ahead of the issue.",
             items: [
-                "Should no longer crash"
+                "Preemptive fix."
             ]
         }
     ]

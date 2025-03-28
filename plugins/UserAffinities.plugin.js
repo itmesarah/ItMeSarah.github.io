@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.0
+ * @version 2.1.1
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -86,8 +86,8 @@ const SystemDesign = {
 }
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
 const [Module, Key] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byStrings(".current.setThemeOptions("))
-const AffinitiesButton = BdApi.Webpack.getByStrings('.Masks.HEADER_BAR_BADGE_BOTTOM',{searchExports:true})
-const openContextMenu = BdApi.Webpack.getByStrings("new DOMRect",{searchExports:true}) // ;3
+const AffinitiesButton = BdApi.Webpack.getModule(x=>x.Icon).Icon
+const openContextMenu = BdApi.Webpack.getByStrings("new DOMRect",{searchExports:true})
 
 const PLUGIN_CSS = `
 .affinity-value {
@@ -351,14 +351,14 @@ function forceUpdate(element) {
   
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.1.0 preemptively fixes the modal root which will break soon.",
+    blurb: "Version 2.1.1 fixes the affinities button",
     changes: [
         {
-            title: "Preemptive fix",
+            title: "button fix",
             type: "fixed",
-            blurb: "Modal root would soon break, this just is getting ahead of the issue.",
+            blurb: "Button brokey, no longer brokey.",
             items: [
-                "Preemptive fix."
+                "Issa fix."
             ]
         }
     ]

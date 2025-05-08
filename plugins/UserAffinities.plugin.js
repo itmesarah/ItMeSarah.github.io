@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.1
+ * @version 2.1.2
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -85,7 +85,7 @@ const SystemDesign = {
     openModal: BdApi.Webpack.getByStrings('onCloseRequest','onCloseCallback','onCloseCallback','instant','backdropStyle',{searchExports:true})
 }
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
-const [Module, Key] = BdApi.Webpack.getWithKey(BdApi.Webpack.Filters.byStrings(".current.setThemeOptions("))
+const Module = BdApi.Webpack.getBySource('"data-windows"')
 const AffinitiesButton = BdApi.Webpack.getModule(x=>x.Icon).Icon
 const openContextMenu = BdApi.Webpack.getByStrings("new DOMRect",{searchExports:true})
 
@@ -348,20 +348,44 @@ function forceUpdate(element) {
       toForceUpdate.forceUpdate(() => {})
     );
   }
-  
+
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.1.1 fixes the affinities button",
+    blurb: "Version 2.1.2 Plugin fixed, should no longer have issues in vc, button moved to top bar",
     changes: [
         {
-            title: "button fix",
+            title: "Fixed the plugin having issues in vc where it'd rerender the user speaking repeatedly",
             type: "fixed",
-            blurb: "Button brokey, no longer brokey.",
+            blurb: "Plugin should be fixed, thanks Arven.",
             items: [
-                "Issa fix."
+                "Fixed and handing it over to Arven"
             ]
         }
     ]
+}
+
+
+function forceUpdateApp() {
+    const appMount = document.getElementById("app-mount");
+
+    const reactContainerKey = Object.keys(appMount).find(m => m.startsWith("__reactContainer$"));
+
+    let container = appMount[reactContainerKey];
+
+    while (!container.stateNode?.isReactComponent) {
+        container = container.child;
+    }
+
+    const { render } = container.stateNode;
+
+    if (render.toString().includes("null")) return;
+
+    container.stateNode.render = () => null;
+
+    container.stateNode.forceUpdate(() => {
+        container.stateNode.render = render;
+        container.stateNode.forceUpdate();
+    });
 }
 
 module.exports = class UserAffinities {
@@ -384,6 +408,8 @@ module.exports = class UserAffinities {
     }
 
     start() {
+        forceUpdateApp()
+
         const savedVersion = BdApi.Data.load("UserAffinities", "version");
         if (savedVersion !== this.meta.version) {
             BdApi.UI.showChangelogModal(Object.assign({
@@ -401,11 +427,9 @@ module.exports = class UserAffinities {
             });
         }
 
-        BdApi.Patcher.after("UserAffPatch", Module, Key, (a, args, res) => {
-            const props = BdApi.Utils.findInTree(res, x => x?.className?.includes?.("toolbar"), { walkable: ['props', 'children'] }) ||
-                BdApi.Utils.findInTree(res, x => x?.onDoubleClick, { walkable: ['props', 'children'] });
-            if (!props) return;
-
+        BdApi.Patcher.after("UserAffPatch", Module, "T", (a, args, res) => {
+            const topbar = res.props.children[2].props.children[0].props.children
+            
             const button = React.createElement(AffinitiesButton, {
                 key: "affinities",
                 icon: SystemDesign.RobotIcon,
@@ -413,17 +437,7 @@ module.exports = class UserAffinities {
                 onClick: () => SystemDesign.openModal(props => React.createElement(LostItemsModal, { props }))
             });
 
-            try {
-                props.children.props.children.push(button);
-            } catch (err) {}
-
-            const unpatch = BdApi.Patcher.after("UserAffPatch", props.children, 'type', (aa, bb, cc) => {
-                unpatch();
-                try {
-                    cc.props.children.push(button);
-                } catch (err) {}
-            });
-
+            topbar.push(button)
         });
 
 		BdApi.DOM.addStyle("UserAffinities", PLUGIN_CSS);

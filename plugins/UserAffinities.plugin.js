@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.2
+ * @version 2.1.3
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -35,7 +35,7 @@
 const Queries = {
     UserPopout: {
         main: [
-            `[class*="biteSize_"]` // Just in case
+            `[class*="user-profile-popout"]` // Just in case
         ].join(","),
 
         target: [
@@ -45,11 +45,11 @@ const Queries = {
 
     UserModal: {
         main: [
-            `[class*="fullSize_"]` // This catches all user modal roots
+            `[class*="user-profile-modal"]` // This catches all user modal roots
         ].join(","),
 
         target: [
-            `[class*="body_"] > [class*="container_"]` // This is for simplified
+            `[class*="body_"] > [class*="container_"], [class*="profileBody__"] > [class*="container_"]` // This is for simplified
         ].join(",")
     },
 

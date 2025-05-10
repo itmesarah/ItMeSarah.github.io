@@ -351,7 +351,7 @@ function forceUpdate(element) {
 
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.1.2 Plugin fixed, should no longer have issues in vc, button moved to top bar",
+    blurb: "Version 2.1.3 Plugin fixed, should no longer have issues in vc, button moved to top bar",
     changes: [
         {
             title: "Fixed the plugin having issues in vc where it'd rerender the user speaking repeatedly",

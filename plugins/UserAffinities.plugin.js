@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.3
+ * @version 2.1.4
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -85,7 +85,7 @@ const SystemDesign = {
     openModal: BdApi.Webpack.getByStrings('onCloseRequest','onCloseCallback','onCloseCallback','instant','backdropStyle',{searchExports:true})
 }
 const uri = (guild) => `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.webp?size=720`;
-const Module = BdApi.Webpack.getBySource('"data-windows"')
+const Module = BdApi.Webpack.getBySource('.PlatformTypes.WINDOWS&&(0,')
 const AffinitiesButton = BdApi.Webpack.getModule(x=>x.Icon).Icon
 const openContextMenu = BdApi.Webpack.getByStrings("new DOMRect",{searchExports:true})
 
@@ -351,14 +351,14 @@ function forceUpdate(element) {
 
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.1.3 Plugin fixed, should no longer have issues in vc, button moved to top bar",
+    blurb: "Version 2.1.4 Plugin fixed should no longer fail to find module.",
     changes: [
         {
-            title: "Fixed the plugin having issues in vc where it'd rerender the user speaking repeatedly",
+            title: "Fixed the plugin failing to load due to missing module.",
             type: "fixed",
             blurb: "Plugin should be fixed, thanks Arven.",
             items: [
-                "Fixed and handing it over to Arven"
+                "Fixed"
             ]
         }
     ]

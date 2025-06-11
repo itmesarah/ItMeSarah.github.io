@@ -66,7 +66,7 @@ const Queries = {
 
 
 const GenericTextClasses = BdApi.Webpack.getByKeys("defaultColor", "h2");
-const SelectClasses = BdApi.Webpack.getByKeys("defaultColor", "selectable") ?? {defaultColor: "defaultColor__30336"};
+const SelectClasses = BdApi.Webpack.getByKeys("defaultColor", "selectable") ?? {defaultColor: "defaultColor__4bd52"};
 const TextClasses = Object.assign(GenericTextClasses, SelectClasses);
 const AffinityStore = BdApi.Webpack.getModule(x=>x.getAll).getAll().find(x=>x.getName() == "UserAffinitiesStore")
 const GuildAffinitiesStore = BdApi.Webpack.getStore("GuildAffinitiesStore"); 

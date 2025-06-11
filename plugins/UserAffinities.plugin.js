@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.4
+ * @version 2.1.5
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -68,7 +68,7 @@ const Queries = {
 const GenericTextClasses = BdApi.Webpack.getByKeys("defaultColor", "h2");
 const SelectClasses = BdApi.Webpack.getByKeys("defaultColor", "selectable") ?? {defaultColor: "defaultColor__30336"};
 const TextClasses = Object.assign(GenericTextClasses, SelectClasses);
-const AffinityStore = BdApi.Webpack.getStore("UserAffinitiesStore");
+const AffinityStore = BdApi.Webpack.getModule(x=>x.getAll).getAll().find(x=>x.getName() == "UserAffinitiesStore")
 const GuildAffinitiesStore = BdApi.Webpack.getStore("GuildAffinitiesStore"); 
 const RelationshipStore = BdApi.Webpack.getStore("RelationshipStore"); 
 const UserStore = BdApi.Webpack.getStore("UserStore"); 
@@ -351,10 +351,10 @@ function forceUpdate(element) {
 
 // Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.1.4 Plugin fixed should no longer fail to find module.",
+    blurb: "Version 2.1.5 Plugin fixed should no longer fail to find the affinities store.",
     changes: [
         {
-            title: "Fixed the plugin failing to load due to missing module.",
+            title: "Fixed the plugin failing to load due to missing affinities store search.",
             type: "fixed",
             blurb: "Plugin should be fixed, thanks Arven.",
             items: [

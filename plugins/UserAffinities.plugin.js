@@ -1,13 +1,13 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.5
+ * @version 2.1.6
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
  * @website https://itmesarah.github.io/
  */
- 
+
 /*@cc_on
 @if (@_jscript)
     
@@ -64,14 +64,97 @@ const Queries = {
     }
 }
 
+class CachedAffinityStore {
+    constructor() {
+        this.userAffinities = null;
+        this.userAffinitiesMap = new Map();
+        this.userAffinitiesSet = new Set();
+        this.lastFetch = 0;
+        this.cacheExpiry = 5 * 60 * 1000;
+        this.isLoading = false;
+        this.loadPromise = null;
+    }
+
+    async getUserAffinities() {
+        const now = Date.now();
+
+        if (this.userAffinities && (now - this.lastFetch) < this.cacheExpiry) {
+            return this.userAffinities;
+        }
+
+        if (this.isLoading && this.loadPromise) {
+            return this.loadPromise;
+        }
+
+        this.isLoading = true;
+        this.loadPromise = this._fetchUserAffinities();
+
+        try {
+            return await this.loadPromise;
+        } finally {
+            this.isLoading = false;
+            this.loadPromise = null;
+        }
+    }
+
+    async _fetchUserAffinities() {
+        try {
+            const data = await RestAPI.get({url: DeprecatedV1AffeinStore});
+            const affinities = data.body.user_affinities;
+
+            this.userAffinities = affinities;
+            this.lastFetch = Date.now();
+
+            this.userAffinitiesMap.clear();
+            this.userAffinitiesSet.clear();
+
+            affinities.forEach(affinity => {
+                this.userAffinitiesMap.set(affinity.user_id, affinity);
+                this.userAffinitiesSet.add(affinity.user_id);
+            });
+
+            return affinities;
+        } catch (error) {
+            console.error('Failed to fetch user affinities:', error);
+            return this.userAffinities || [];
+        }
+    }
+
+    async getUserAffinitiesUserIds() {
+        await this.getUserAffinities();
+        return this.userAffinitiesSet;
+    }
+
+    async getUserAffinity(userId) {
+        await this.getUserAffinities();
+        return this.userAffinitiesMap.get(userId);
+    }
+
+    async refresh() {
+        this.userAffinities = null;
+        this.lastFetch = 0;
+        return this.getUserAffinities();
+    }
+
+    clearCache() {
+        this.userAffinities = null;
+        this.userAffinitiesMap.clear();
+        this.userAffinitiesSet.clear();
+        this.lastFetch = 0;
+    }
+}
 
 const GenericTextClasses = BdApi.Webpack.getByKeys("defaultColor", "h2");
 const SelectClasses = BdApi.Webpack.getByKeys("defaultColor", "selectable") ?? {defaultColor: "defaultColor__4bd52"};
 const TextClasses = Object.assign(GenericTextClasses, SelectClasses);
-const AffinityStore = BdApi.Webpack.getModule(x=>x.getAll).getAll().find(x=>x.getName() == "UserAffinitiesStore")
-const GuildAffinitiesStore = BdApi.Webpack.getStore("GuildAffinitiesStore"); 
-const RelationshipStore = BdApi.Webpack.getStore("RelationshipStore"); 
-const UserStore = BdApi.Webpack.getStore("UserStore"); 
+const RestAPI = BdApi.Webpack.getModule(m => typeof m === "object" && m.del && m.put, {searchExports: true})
+const DeprecatedV1AffeinStore = BdApi.Webpack.getModule(x=>x.ANM.USER_AFFINITIES_V2).ANM.USER_AFFINITIES
+
+const AffinityStore = new CachedAffinityStore();
+
+const GuildAffinitiesStore = BdApi.Webpack.getStore("GuildAffinitiesStore");
+const RelationshipStore = BdApi.Webpack.getStore("RelationshipStore");
+const UserStore = BdApi.Webpack.getStore("UserStore");
 const SelectedGuildStore = BdApi.Webpack.getStore("SelectedGuildStore");
 const ConsentStore = BdApi.Webpack.getStore("ConsentStore");
 const updateConsents = BdApi.Webpack.getByStrings("SETTINGS_CONSENT", "grant", {searchExports: true});
@@ -253,33 +336,69 @@ function LostItemsModal({ props }) {
     const [activeTab, setActiveTab] = useState('friends');
     const [friends, setFriends] = useState([]);
     const [guilds, setGuilds] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useLayoutEffect(() => {
-        const currentFriends = Object.entries(RelationshipStore.getRelationships())
-        .filter(([, type]) => type === 1)
-        .map(([id]) => {
-            const user = UserStore.getUser(id);
-            const affinity = AffinityStore.getUserAffinities().find(a => a.user_id === id)?.affinity ?? 0;
-            return { id, name: user.username, affinity: Math.round(affinity), icon: user.getAvatarURL() };
-        })
-        .sort((a, b) => b.affinity - a.affinity);
+        const loadData = async () => {
+            try {
+                setLoading(true);
 
-    const currentGuilds = Object.values(GuildStore.getGuilds())
-        .map(guild => {
-            const detailedGuild = GuildStore.getGuild(guild.id);
-            const affinity = GuildAffinitiesStore.getGuildAffinity(guild.id)?.score ?? 0;
-            return {
-                id: detailedGuild.id,
-                name: detailedGuild.name,
-                affinity: Math.round(affinity),
-                icon: detailedGuild.getIconURL() ?? void 0
-            };
-        })
-        .sort((a, b) => b.affinity - a.affinity);
+                const userAffinities = await AffinityStore.getUserAffinities();
 
-        setFriends(currentFriends);
-        setGuilds(currentGuilds);
+                const currentFriends = Object.entries(RelationshipStore.getRelationships())
+                    .filter(([, type]) => type === 1)
+                    .map(([id]) => {
+                        const user = UserStore.getUser(id);
+                        const affinity = userAffinities.find(a => a.user_id === id)?.affinity ?? 0;
+                        return {
+                            id,
+                            name: user.username,
+                            affinity: Math.round(affinity),
+                            icon: user.getAvatarURL()
+                        };
+                    })
+                    .sort((a, b) => b.affinity - a.affinity);
+
+                const currentGuilds = Object.values(GuildStore.getGuilds())
+                    .map(guild => {
+                        const detailedGuild = GuildStore.getGuild(guild.id);
+                        const affinity = GuildAffinitiesStore.getGuildAffinity(guild.id)?.score ?? 0;
+                        return {
+                            id: detailedGuild.id,
+                            name: detailedGuild.name,
+                            affinity: Math.round(affinity),
+                            icon: detailedGuild.getIconURL() ?? void 0
+                        };
+                    })
+                    .sort((a, b) => b.affinity - a.affinity);
+
+                setFriends(currentFriends);
+                setGuilds(currentGuilds);
+            } catch (error) {
+                console.error('Error loading affinities data:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
     }, []);
+
+    if (loading) {
+        return React.createElement(
+            SystemDesign.ModalRoot,
+            { ...props },
+            React.createElement(
+                'div',
+                { className: 'Affinities-modal' },
+                React.createElement(
+                    'div',
+                    { className: 'Affinities-header' },
+                    React.createElement('h2', { className: 'Affinities-title' }, 'Loading Affinities...')
+                )
+            )
+        );
+    }
 
     return React.createElement(
         SystemDesign.ModalRoot,
@@ -316,17 +435,17 @@ function LostItemsModal({ props }) {
                 'div',
                 { className: 'Affinities-content' },
                 activeTab === 'friends' &&
-                    React.createElement(
-                        'div',
-                        { className: 'Affinities-tab-content' },
-                        React.createElement(ChangeSection, { title: 'Friend', items: friends, type: 'friend' })
-                    ),
+                React.createElement(
+                    'div',
+                    { className: 'Affinities-tab-content' },
+                    React.createElement(ChangeSection, { title: 'Friend', items: friends, type: 'friend' })
+                ),
                 activeTab === 'servers' &&
-                    React.createElement(
-                        'div',
-                        { className: 'Affinities-tab-content' },
-                        React.createElement(ChangeSection, { title: 'Guild', items: guilds, type: 'guild' })
-                    )
+                React.createElement(
+                    'div',
+                    { className: 'Affinities-tab-content' },
+                    React.createElement(ChangeSection, { title: 'Guild', items: guilds, type: 'guild' })
+                )
             )
         )
     );
@@ -336,34 +455,32 @@ function forceUpdate(element) {
     if (!element) return;
     const toForceUpdate = BdApi.ReactUtils.getOwnerInstance(element);
     const forceRerender = BdApi.Patcher.instead(
-      "ihatethis",
-      toForceUpdate,
-      "render",
-      () => {
-        forceRerender();
-        return null;
-      }
+        "ihatethis",
+        toForceUpdate,
+        "render",
+        () => {
+            forceRerender();
+            return null;
+        }
     );
     toForceUpdate.forceUpdate(() =>
-      toForceUpdate.forceUpdate(() => {})
+        toForceUpdate.forceUpdate(() => {})
     );
-  }
+}
 
-// Change types are fixed, improved, progress, added
 const changelog = {
-    blurb: "Version 2.1.5 Plugin fixed should no longer fail to find the affinities store.",
+    blurb: "Version 2.1.6 Plugin fixed, Discord seems to be removing user affinities store, if this continues I will be discontinuing the plugin, sorry all like 3 people who use it.",
     changes: [
         {
-            title: "Fixed the plugin failing to load due to missing affinities store search.",
+            title: "Fixed for now, may be discontinued soon",
             type: "fixed",
             blurb: "Plugin should be fixed, thanks Arven.",
             items: [
-                "Fixed"
+                "Should no longer crash"
             ]
         }
     ]
 }
-
 
 function forceUpdateApp() {
     const appMount = document.getElementById("app-mount");
@@ -391,8 +508,9 @@ function forceUpdateApp() {
 module.exports = class UserAffinities {
     constructor(meta) {
         this.meta = meta;
+        this.affinityStore = AffinityStore;
     }
-    
+
     getSettingsPanel() {
         return BdApi.UI.buildSettingsPanel({
             onChange: (_, id, value) => {
@@ -403,6 +521,16 @@ module.exports = class UserAffinities {
                 {type: "switch", id: "popoutaffinities", name: "Popout Affinities", note: "Adds Affinity score to User Popouts", value: settings.popoutaffinities},
                 {type: "switch", id: "modalaffinities", name: "Modal Affinities", note: "Adds Affinity score to User Modals", value: settings.modalaffinities},
                 {type: "switch", id: "guildaffinities", name: "Guild Affinities", note: "Adds Affinity score to Guilds", value: settings.guildaffinities},
+                {type: "button", id: "refreshcache", name: "Refresh Cache", note: "Manually refresh the affinities cache",
+                    onClick: () => {
+                        this.affinityStore.refresh().then(() => {
+                            BdApi.UI.showToast("Affinities cache refreshed!", {type: "success"});
+                        }).catch(err => {
+                            BdApi.UI.showToast("Failed to refresh cache", {type: "error"});
+                            console.error("Cache refresh error:", err);
+                        });
+                    }
+                }
             ]
         });
     }
@@ -429,7 +557,7 @@ module.exports = class UserAffinities {
 
         BdApi.Patcher.after("UserAffPatch", Module, "T", (a, args, res) => {
             const topbar = res.props.children[2].props.children[0].props.children
-            
+
             const button = React.createElement(AffinitiesButton, {
                 key: "affinities",
                 icon: SystemDesign.RobotIcon,
@@ -440,12 +568,18 @@ module.exports = class UserAffinities {
             topbar.push(button)
         });
 
-		BdApi.DOM.addStyle("UserAffinities", PLUGIN_CSS);
+        BdApi.DOM.addStyle("UserAffinities", PLUGIN_CSS);
+
+        this.affinityStore.getUserAffinities().catch(err => {
+            console.error("Failed to pre-load affinities cache:", err);
+        });
     }
 
     stop() {
         BdApi.DOM.removeStyle("UserAffinities");
         BdApi.Patcher.unpatchAll("UserAffPatch");
+
+        this.affinityStore.clearCache();
     }
 
     createAffinityLabel(score) {
@@ -465,7 +599,7 @@ module.exports = class UserAffinities {
         return affinityWrap;
     }
 
-    processUserElement(element, mainQuery, targetQuery) { 
+    async processUserElement(element, mainQuery, targetQuery) {
         // Try go get the main element as a descendent with fallback to currently added element
         const mainElement = element.querySelector(mainQuery) ?? element;
 
@@ -477,7 +611,7 @@ module.exports = class UserAffinities {
         const id = userId?.userId ?? userId?.user?.id ?? userId?.message?.author?.id;
 
         // Check the set to see if this user has an affinity
-        const affinityUsers = AffinityStore.getUserAffinitiesUserIds();
+        const affinityUsers = await this.affinityStore.getUserAffinitiesUserIds();
         if (!affinityUsers.has(id)) return;
 
         // Grab our destination element
@@ -485,14 +619,14 @@ module.exports = class UserAffinities {
         if (!target) return;
 
         // Get the actual affinity score
-        const affinities = AffinityStore.getUserAffinities();
-        const affinity = affinities.find(a => a.user_id === id);
+        const affinity = await this.affinityStore.getUserAffinity(id);
+        if (!affinity) return;
 
         // Add it to the target
         target.append(this.createAffinityLabel(affinity.affinity));
     }
 
-    processUserPopout(element) { 
+    processUserPopout(element) {
         // If the setting is disabled don't bother processing
         if (!settings.popoutaffinities) return;
 

@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.6
+ * @version 2.1.7
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -345,7 +345,7 @@ function LostItemsModal({ props }) {
 
                 const userAffinities = await AffinityStore.getUserAffinities();
 
-                const currentFriends = Object.entries(RelationshipStore.getRelationships())
+                const currentFriends = Object.entries(RelationshipStore.getMutableRelationships())
                     .filter(([, type]) => type === 1)
                     .map(([id]) => {
                         const user = UserStore.getUser(id);
@@ -469,14 +469,13 @@ function forceUpdate(element) {
 }
 
 const changelog = {
-    blurb: "Version 2.1.6 Plugin fixed, Discord seems to be removing user affinities store, if this continues I will be discontinuing the plugin, sorry all like 3 people who use it.",
+    blurb: "Version 2.1.7 getRelationships renamed to getMutableRelationships.",
     changes: [
         {
             title: "Fixed for now, may be discontinued soon",
             type: "fixed",
-            blurb: "Plugin should be fixed, thanks Arven.",
             items: [
-                "Should no longer crash"
+                "Should work again."
             ]
         }
     ]

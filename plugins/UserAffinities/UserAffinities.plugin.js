@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.7
+ * @version 2.1.8
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -473,7 +473,7 @@ function forceUpdate(element) {
 }
 
 const changelog = {
-    blurb: "Version 2.1.7 Plugin fixed, Discord changed the guild icons, now requires specifying 720p rather than 720, also removed getIconURL",
+    blurb: "Version 2.1.8 Plugin fixed, Discord changed the guild icons,removed getIconURL, now uses getGuildIconURL",
     changes: [
         {
             title: "Fixed the issue of the plugin breaking due to not being able to fetch guild icons.",

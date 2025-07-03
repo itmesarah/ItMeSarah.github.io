@@ -361,8 +361,8 @@ function LostItemsModal({ props }) {
                 const currentGuilds = Object.values(GuildStore.getGuilds())
                     .map(guild => {
                         if (!guild || !guild.id) return null;
-						const GuildIconUtils = BdApi.Webpack.getByKeys("getGuildIconURL");
-                        const icon = GuildIconUtils.getGuildIconURL(guild);
+                        const GuildIconUtils = BdApi.Webpack.getByKeys("getGuildIconURL");
+						const icon = GuildIconUtils.getGuildIconURL(guild);
                         const affinity = GuildAffinitiesStore.getGuildAffinity(guild.id)?.score ?? 0;
                         return {
                             id: guild.id,

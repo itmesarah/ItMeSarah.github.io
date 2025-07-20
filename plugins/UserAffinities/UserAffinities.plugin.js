@@ -1,7 +1,7 @@
 /**
  * @name UserAffinities
  * @description Shows user affinity scores in user popouts and user profile as well as it's own modal.
- * @version 2.1.8
+ * @version 2.1.9
  * @author Sarah,Zerebos,Arven
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
@@ -473,14 +473,14 @@ function forceUpdate(element) {
 }
 
 const changelog = {
-    blurb: "Version 2.1.8 Plugin fixed, Discord changed the guild icons,removed getIconURL, now uses getGuildIconURL",
+    blurb: "Version 2.1.9, icon should show up again. Top bar changed a lil bit. ",
     changes: [
         {
-            title: "Fixed the issue of the plugin breaking due to not being able to fetch guild icons.",
+            title: "Fixed the issue of the top bar icon not displaying..",
             type: "fixed",
             blurb: "Plugin should be fixed.",
             items: [
-                "Should no longer fail to fetch guild icons causing the plugin to not display guilds at all."
+                "Fixed the top bar module change. "
             ]
         }
     ]
@@ -559,7 +559,7 @@ module.exports = class UserAffinities {
             });
         }
 
-        BdApi.Patcher.after("UserAffPatch", Module, "T", (a, args, res) => {
+        BdApi.Patcher.after("UserAffPatch", Module, "TF", (a, args, res) => {
             const topbar = res.props.children[2].props.children[0].props.children
 
             const button = React.createElement(AffinitiesButton, {

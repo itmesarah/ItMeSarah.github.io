@@ -6,6 +6,8 @@
  * @authorLink https://github.com/ItMeSarah
  * @invite kckPSV8Z3m
  * @website https://itmesarah.github.io/
+ * @source https://github.com/itmesarah/ItMeSarah.github.io/tree/main/plugins/UserAffinities
+ * @updateUrl https://ItMeSarah.github.io/plugins/UserAffinities/UserAffinities.plugin.js
  */
 
 /*@cc_on
